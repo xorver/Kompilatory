@@ -13,16 +13,19 @@ def processFile(filepath):
 	autor = re.compile('<META NAME="AUTOR" CONTENT="(.*?)">').search(content).group(1)
 	dzial = re.compile('<META NAME="DZIAL" CONTENT="(.*?)">').search(content).group(1)
 	slowa_kluczowe = re.compile('<META NAME="KLUCZOWE_\d*?" CONTENT="(.*?)">').findall(content)
-	tekst = re.sub('<.*?>','',re.compile('<B>(.*)</B>',re.DOTALL).search(content).group())
+	tekst = re.sub('<.*?>','',re.compile('<P>(.*)<META.*?>',re.DOTALL).search(content).group())
 	#print tekst 
-	zdania = re.compile('(?:(?<=\. )|(?<=^))[A-Z].+?(?:(?=\.\s*$)|(?=\.\s+[A-Z]))',re.MULTILINE).findall(tekst)
-	skroty = flat( map(lambda zdanie: re.compile(' [A-Za-z]+?\.').findall(zdanie),zdania) ) 
-	calkowite = re.compile('\d+(?![.,] ?\d)').findall(tekst)
-	zmiennoprzecinkowe = re.compile('\d+[.,] ?\d+').findall(tekst)
-	MIESIAC = '(?:[sS]tycz|[lL]ut|[mM]ar|[kK]wie|[mM]aj|[cC]zerw|[lL]ip|[sS]ierp|[wWrze|[pP]a|[lL]ist|[gG]rud)[a-z]+'
-	DZIEN_I_MIESIAC = '(?:\d\d? ' + MIESIAC+')'
-	ROK = '\d\d\d\d (?:r\.|roku)'
-	daty = re.compile(DZIEN_I_MIESIAC+' '+ROK+'|'+DZIEN_I_MIESIAC+'|'+MIESIAC+' '+ROK+'|'+ROK).findall(tekst)
+	zdania = re.compile('(?:(?<=\. )|(?<=^))[A-Z].+?(?:(?=\.\s*$)|(?=\.\s+[A-Z])|(?=[?!]+))',re.MULTILINE).findall(tekst)
+	skroty = flat( map(lambda zdanie: re.compile(' \s\w{1,3}\.\w').findall(zdanie),zdania) ) 
+	calkowite = filter(lambda number: number>=-32768 && number<=32767, re.compile('-?\d+(?!\.?\d)').findall(tekst))
+	zmiennoprzecinkowe = re.compile('-?(?:\d+[.]\d*|\d*[.]\d+)(?:e[+-]?\d+)?').findall(tekst)
+	#MIESIAC = '(?:[sS]tycz|[lL]ut|[mM]ar|[kK]wie|[mM]aj|[cC]zerw|[lL]ip|[sS]ierp|[wWrze|[pP]a|[lL]ist|[gG]rud)[a-z]+'
+	#DZIEN_I_MIESIAC = '(?:\d\d? ' + MIESIAC+')'
+	#ROK = '\d\d\d\d (?:r\.|roku)'
+	#daty = re.compile(DZIEN_I_MIESIAC+' '+ROK+'|'+DZIEN_I_MIESIAC+'|'+MIESIAC+' '+ROK+'|'+ROK).findall(tekst)
+	daty = re.compile('((0[0-9]|[12][0-9])([-/.])(0[1-9]|1[0-2]))\1\d\d\d\d').findall(tekst) ## todo naprawic
+	
+	
 	maile = re.compile('\w+@\w+(?:\.\w+)*').findall(content)
 	print("autor:" + autor)
 	print("dzial:"+ dzial)
