@@ -1,0 +1,13 @@
+13:14:26.356390 IP (tos 0x8, ttl  64, id 30919, offset 0, flags [none], length: 40) 149.156.99.9.22 > 149.156.99.182.1128: . [tcp sum ok] ack 1339 win 32768
+13:14:26.356651 IP (tos 0x0, ttl 128, id 15795, offset 0, flags [DF], length: 60) 149.156.99.182.1128 > 149.156.99.9.22: P [tcp sum ok] 1339:1359(20) ack 2136 win 65127
+13:13:34.874424 IP (tos 0x0, ttl  57, id 15119, offset 0, flags [DF], length: 44) 217.74.65.55.80 > 149.156.99.182.1096: S [tcp sum ok] 628266130:628266130(0) ack 1209407481 win 17520 
+13:13:34.874821 IP (tos 0x0, ttl 128, id 14111, offset 0, flags [DF], length: 40) 149.156.99.182.1096 > 217.74.65.55.80: . [tcp sum ok] ack 1 win 65535
+13:13:34.892791 IP (tos 0x0, ttl 128, id 14112, offset 0, flags [DF], length: 724) 149.156.99.182.1096 > 217.74.65.55.80: P 1:685(684) ack 1 win 65535
+13:13:35.278346 arp who-has 149.156.99.89 tell 149.156.99.51
+13:13:35.976915 IP (tos 0x0, ttl  51, id 0, offset 0, flags [DF], length: 48) 130.203.133.50.80 > 149.156.99.182.1118: S [tcp sum ok] 2438363353:2438363353(0) ack 3625569573 win 5840 
+13:13:40.849502 IP (tos 0x0, ttl 128, id 14282, offset 0, flags [DF], length: 724) 149.156.99.182.1096 > 217.74.65.55.80: P 1:685(684) ack 1 win 65535
+13:13:41.977473 IP (tos 0x0, ttl  51, id 0, offset 0, flags [DF], length: 48) 130.203.133.50.80 > 149.156.99.182.1118: S [tcp sum ok] 2438363353:2438363353(0) ack 3625569573 win 5840 
+13:13:45.393437 IP (tos 0x0, ttl  57, id 31623, offset 0, flags [DF], length: 40) 217.74.64.234.80 > 149.156.99.182.1100: F [tcp sum ok] 420:420(0) ack 476 win 6432
+13:13:45.393901 IP (tos 0x0, ttl 128, id 14423, offset 0, flags [DF], length: 40) 149.156.99.182.1100 > 217.74.64.234.80: . [tcp sum ok] ack 421 win 65116
+13:13:46.493062 IP (tos 0x0, ttl   1, id 14453, offset 0, flags [none], length: 92) 149.156.99.182 > 216.239.59.104: icmp 72: echo request seq 256
+13:13:46.493598 IP (tos 0xc0, ttl  64, id 21761, offset 0, flags [none], length: 140) 149.156.99.17 > 149.156.99.182: icmp 120: time exceeded in-transit
