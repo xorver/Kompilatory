@@ -1,0 +1,53 @@
+%{
+/* Program skanuje logi */
+#include<string.h>
+%}
+DIGIT [0-9]
+MINUTES [0-5][0-9]
+HOURS [01][0-9]|2[0-3]
+HEX [0-9]|[0-9]{2}|[01][0-9][0-9]|2[0-4][0-9]|25[0-5]
+PORT [0-9]{1,4}|[0-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]
+%s START TIMESTAMP_PREFIX TIMESTAMP_SUFFIX IP_KEYWORD SOME_PROPERTIES FIRST_IP_PREFIX FIRST_IP_PROPER_SUFFIX FIRST_IP_NON_PROPER_SUFFIX  FULL_FIRST_PROPER_IP FULL_FIRST_NON_PROPER_IP
+%s SECOND_IP_PROPER_SUFFIX CONSUME_TILL_ENDL FLAG BEFORE_SIZE
+%option yylineno
+%%
+	char line[300];
+	char *ptr;
+	
+	void append(char* s){
+		strcpy(ptr,s);
+		ptr+=strlen(s);
+	}
+
+
+^{HOURS}:{MINUTES}:{MINUTES} {ptr=line;append(yytext);BEGIN(TIMESTAMP_PREFIX);}
+<TIMESTAMP_PREFIX>[.]{DIGIT}{6} {BEGIN(TIMESTAMP_SUFFIX);}
+<TIMESTAMP_SUFFIX>[ ]IP {BEGIN(IP_KEYWORD);}
+<IP_KEYWORD>[ ][(][^)]*[)] {append(" from");BEGIN(SOME_PROPERTIES);}
+<SOME_PROPERTIES>[ ]({HEX}[.]){3}{HEX} {append(yytext);BEGIN(FIRST_IP_PREFIX);}
+<FIRST_IP_PREFIX>[.](80|8080) {append(yytext);BEGIN(FIRST_IP_PROPER_SUFFIX);}
+<FIRST_IP_PREFIX>[.]{PORT} {append(yytext);BEGIN(FIRST_IP_NON_PROPER_SUFFIX);}
+<FIRST_IP_PREFIX,FIRST_IP_NON_PROPER_SUFFIX>[ ]> {append(" to");BEGIN(FULL_FIRST_NON_PROPER_IP);}
+<FIRST_IP_PROPER_SUFFIX>[ ]> {append(" to");BEGIN(FULL_FIRST_PROPER_IP);}
+<FULL_FIRST_NON_PROPER_IP,FULL_FIRST_PROPER_IP>[ ]({HEX}[.]){3}{HEX} {append(yytext);}
+<FULL_FIRST_NON_PROPER_IP>[.](80|8080) {append(yytext);BEGIN(SECOND_IP_PROPER_SUFFIX);}
+<FULL_FIRST_NON_PROPER_IP>[.]{PORT} {BEGIN(CONSUME_TILL_ENDL);}
+<FULL_FIRST_NON_PROPER_IP>: {BEGIN(CONSUME_TILL_ENDL);}
+
+<FULL_FIRST_PROPER_IP>([.]{DIGIT}+)? {append(yytext);BEGIN(SECOND_IP_PROPER_SUFFIX);}
+<SECOND_IP_PROPER_SUFFIX>:[ ](.|icmp) {BEGIN(FLAG);}
+<FLAG>[ ]{DIGIT}+:{DIGIT}+\( {BEGIN(BEFORE_SIZE);}
+<BEFORE_SIZE>{DIGIT}+ {append(" ");append(yytext);append(" bytes");printf("%s\n",line);BEGIN(CONSUME_TILL_ENDL);}
+<FLAG>. {printf("%s\n",line);BEGIN(CONSUME_TILL_ENDL);}
+
+
+<CONSUME_TILL_ENDL>.* {BEGIN(START);}
+
+. {printf("blad w lini %d!\n",yylineno);BEGIN(CONSUME_TILL_ENDL);}
+\n { }
+%%
+
+int main() {
+    yylex();
+    return 0;
+}
