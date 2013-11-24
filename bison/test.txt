@@ -1,1 +1,2 @@
-int+double
+int f(a)
+int a;
