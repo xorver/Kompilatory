@@ -27,6 +27,7 @@ char* str_t;
 %token <str_t> POINTER
 %token <str_t> IDENTIFIER
 %token <str_t> NUM
+%token <str_t> STR
 
 %type <function_t> function
  /*%type <argument_t> */
@@ -44,9 +45,11 @@ char* str_t;
 %type <str_t> param_declaration
 %type <str_t> abstract_declarator
 %type <str_t> direct_abstract_declarator
+%type <str_t> body
+%type <str_t> str_list
 
 %%
-function: DECL_SPECIFIER declarator declaration_list {printf("%s %s\n%s",$1,$2,$3);}
+function: DECL_SPECIFIER declarator declaration_list body {printf("%s %s\n%s%s",$1,$2,$3,$4);}
 declaration_list: declaration
 	| declaration declaration_list_tail {
 		char* result=malloc(strlen($1)+strlen($2)+1);
@@ -66,20 +69,20 @@ declaration_list_tail: declaration
 	}
 	;
 declaration: DECL_SPECIFIER ';' {
-		char* result=malloc(strlen($1)+2);
+		char* result=malloc(strlen($1)+3);
 		sprintf(result,"%s;\n",$1);
 		free($1);
 		$$=result;
 	}
 	| DECL_SPECIFIER declarator_list ';' {
-		char* result=malloc(strlen($1)+strlen($2)+2);
+		char* result=malloc(strlen($1)+strlen($2)+4);
 		sprintf(result,"%s %s;\n",$1,$2);
 		free($1);
 		free($2);
 		$$=result;
 	}
 	;
-declarator_list: declarator {printf("declarator: %c\n",$1[0]);$$=$1;}
+declarator_list: declarator
 	| declarator declarator_list_tail {
 		char* result=malloc(strlen($1)+strlen($2)+1);
 		sprintf(result,"%s%s",$1,$2);
@@ -199,14 +202,14 @@ param_list_tail: ',' param_declaration {
 	}
 	;
 param_declaration: DECL_SPECIFIER declarator {
-		char* result = malloc(strlen($1)+strlen($2)+1);
+		char* result = malloc(strlen($1)+strlen($2)+2);
 		sprintf(result,"%s %s",$1,$2);
 		free($1);
 		free($2);
 		$$=result;
 	}
 	| DECL_SPECIFIER abstract_declarator {
-		char* result = malloc(strlen($1)+strlen($2)+1);
+		char* result = malloc(strlen($1)+strlen($2)+2);
 		sprintf(result,"%s %s",$1,$2);
 		free($1);
 		free($2);
@@ -268,7 +271,22 @@ direct_abstract_declarator: '(' abstract_declarator ')'{
 		$$=result;
 	}
 	;
-
+body: '{' str_list {
+		char* result = malloc(strlen($2)+2);
+		sprintf(result,"{%s",$2);
+		free($2);
+		$$=result;
+	}
+	;
+str_list: STR
+	| str_list STR {
+		char* result = malloc(strlen($1)+strlen($2)+1);
+		sprintf(result,"%s%s",$1,$2);
+		free($1);
+		free($2);
+		$$=result;
+	}
+	;
 
 %%
 
