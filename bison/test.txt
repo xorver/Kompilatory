@@ -1,7 +1,9 @@
-int f(a)
-int a;
+int f(a,b,c,d,e,f,g,a1,a2,a3,a4)
+int* a,b,a1,a2,a3,a4;
+float c, d[100];
+char e;
+struct gg* f;
+struct ff g;
 {
-	//  }}}}}}}}}}}}}
-	char* str = "{{{{{{{{{{";
-	/* ... */ 
+/* body */ 
 }
